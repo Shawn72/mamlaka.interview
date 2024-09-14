@@ -1,0 +1,39 @@
+version: "3.4"
+
+services:     
+
+    #mamlakaapi api service
+    mamlakaapi:
+       image: shawn72/mamlakaapi:v0.1.0
+       ports:
+           - 7123:7123
+       restart: always
+       environment:
+           - ASPNETCORE_ENVIRONMENT=Production
+           - 'StaticStrings:DefaultActor=SYSTEM'
+           - 'StaticStrings:DefaultGuid=00000000-0000-0000-0000-000000000000'
+           - 'Database:ConnectionString=Data Source={0},1433;User ID={1};Password={2};Initial Catalog={3};Encrypt=False;' 
+           - 'Database:LocalConnectionString=Data Source={0};User ID={1};Password={2};Initial Catalog={3};Encrypt=False;' 
+           - 'DatabaseSpecs:DbServer=replace-with-you-ip-address'
+           - 'DatabaseSpecs:DbName=MamlakaDb' 
+           - 'DatabaseSpecs:DbUserID=sa'
+           - 'DatabaseSpecs:DbPassword=replace-with-your-password'
+           - 'LocalDatabaseSpecs:DbServer=BIGBADWOLFKLAUS\\SQLEXPRESS'
+           - 'LocalDatabaseSpecs:DbName=MamlakaDb' 
+           - 'LocalDatabaseSpecs:DbUserID=sa'
+           - 'LocalDatabaseSpecs:DbPassword=J@ck$$parrow'
+           - 'Server:backendServer=prod'
+           - 'Security:Key=CaptainJ@ckSParrowCaptainJ@ck2Par'
+           - 'Security:Issuer=ninjaxco.com'
+           - 'Security:Audience=*.ninjaxco.com'
+           - 'Security:SessionLifeTimeInMinutes=30'
+       networks:
+           - asgard-midlands  
+  
+#define networks
+networks:
+  asgard-midlands:
+      external: true
+      driver: bridge
+        
+    

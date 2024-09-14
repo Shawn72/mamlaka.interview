@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Mamlaka.API</name>
+    </assembly>
+    <members>
+        <member name="T:Mamlaka.API.Attributes.SwaggerOrderAttribute">
+            <summary>
+            Annotates a controller with a Swagger sorting order that is used when generating the Swagger documentation to
+            order the controllers in a specific desired order.
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.Attributes.SwaggerOrderAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Mamlaka.API.Attributes.SwaggerOrderAttribute"/> class.
+            </summary>
+            <param name="order">Sets the sorting order of the controller.</param>
+        </member>
+        <member name="P:Mamlaka.API.Attributes.SwaggerOrderAttribute.Order">
+            <summary>
+            Gets the sorting order of the controller.
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Requests.SignInRequest.Email">
+            <summary>
+            Email address for the user logged in
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Requests.SignInRequest.Password">
+            <summary>
+            user account password
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Requests.UserRegisterRequest.UserRole">
+            <summary>
+            predefined user roles: SuperAdmin, Admin, User
+            </summary>
+        </member>
+        <member name="T:Mamlaka.API.CommonObjects.Responses.ResponseStatus">
+            <summary>
+            Generic response status object
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Responses.ResponseStatus.Code">
+            <summary>
+            Status code of the request
+            </summary> 
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Responses.ResponseStatus.Message">
+            <summary>
+            Friendly message to be displayed to end-user after evaluating status code
+            </summary>
+        </member>
+        <member name="T:Mamlaka.API.CommonObjects.Responses.ResponseObject`1">
+            <summary>
+            It's a complex generic base object encapsulating a response object of a specified type alongside request status
+            </summary>    
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Responses.ResponseObject`1.Status">
+            <summary>
+            Object containing status of a function call
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.CommonObjects.Responses.ResponseObject`1.Data">
+            <summary>
+            Generic object containing a method's response
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.Configs.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            service configuration
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:Mamlaka.API.Configs.Startup.ConfigureApp(Microsoft.AspNetCore.Builder.WebApplication)">
+            <summary>
+            app configuration
+            </summary>
+            <param name="app"></param>
+        </member>
+        <member name="T:Mamlaka.API.Configs.ConfigurationExtensionMethods">
+            <summary>
+            extension methods
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.AddIdentity(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            identity configs
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.AddAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            authentication configs
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.AddCustomControllers(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            custom controller configs
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.AddVersioning(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            api swagger versioning
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.AddCustomSwagger(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            custom swagger configs
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Configs.ConfigurationExtensionMethods.UseCustomSwagger(Microsoft.AspNetCore.Builder.WebApplication)">
+            <summary>
+            custom swagger 
+            </summary>
+            <param name="app"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Mamlaka.API.Configs.ConfigurationExtensionMethods.EmptyStringToNullConverter">
+            <summary>
+            json strings extension methods
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.AddNewTransaction(Mamlaka.API.CommonObjects.Requests.TransactionRequest)">
+            <summary>
+            add new transaction to the system
+            </summary>
+            <param name="request"></param>
+            <remarks>
+            request format:
+               POST /api/transactions/new
+               {
+                    "userId": "wywtyr-wrwuwur-wurgwurgu-wyewuy",
+                    "transactionRefId": "TRAREF83893",
+                    "amount": "4500",
+                    "modifiedBy": "Shawn Mbuvi"
+               }
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.AddNewPaypalTransaction(Mamlaka.API.DAL.Models.PaymentModel)">
+            <summary>
+            third party paypal payment endpoint
+            </summary>
+            <param name="paymentModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.ExcecutePaypalTransaction(System.String,System.String)">
+            <summary>
+            execute payment and return response, determine if it went through
+            </summary>
+            <param name="paymentId"></param>
+            <param name="payerID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.GetAllTransactions">
+            <summary>
+            get the list of all transactions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.GetTransactionById(System.Int64)">
+            <summary>
+            get specific transction by Id
+            </summary>
+            <param name="transactionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.UpdateTransaction(Mamlaka.API.CommonObjects.Requests.TransactionEditRequest)">
+            <summary>
+            return book: update book loan details with status returned true
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.DeleteTransaction(System.Int64)">
+            <summary>
+            delete transaction entry from the database
+            </summary>
+            <param name="transactionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.GetPagedTransactionData(Mamlaka.API.Paging.PagingParameters)">
+            <summary>
+            return list of paged loan repayments
+            </summary>
+            <param name="pagingParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.RegisterUser(Mamlaka.API.CommonObjects.Requests.UserRegisterRequest)">
+            <summary>
+            register a new user to the system
+            </summary>
+            <param name="request"></param>
+            <remarks>
+            request format:
+               POST /api/users/register
+               {
+                    "firstName": "Shawn",
+                    "lastName": "Mbuvi",
+                    "email": "seanmbuvi5@gmail.com",
+                    "userRole": "SuperAdmin",
+                    "password": "C@ptainJ@ck$parrow",
+                    "confirmPassword": "C@ptainJ@ck$parrow"
+               }
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.SignIn(Mamlaka.API.CommonObjects.Requests.SignInRequest)">
+            <summary>
+             user login to the system
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.ResetUserPassword(Mamlaka.API.CommonObjects.Requests.PasswordResetRequest)">
+            <summary>
+            reset user password
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.GetAllUsers">
+            <summary>
+            get the list of all users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.GetUserById(System.String)">
+            <summary>
+            get specific user by userId
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.DeleteUser(System.String)">
+            <summary>
+            delete user from the database
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.UserController.GetAllRoles">
+            <summary>
+            list all user roles
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Mamlaka.API.DAL.DbContexts.DbContextFactory">
+            <summary>
+            dbcontex configs for migrations
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.DAL.DbContexts.DbContextFactory.CreateDbContext(System.String[])">
+            <summary>
+            Db creating context
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Mamlaka.API.DAL.DbContexts.MySqlDbContext.AspNetUsers">
+            <summary>
+            entity object definitions
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.DAL.DTOs.SignInDto.IsSuccessful">
+            <summary>
+            Successful sign in result
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.DAL.DTOs.SignInDto.AccessToken">
+            <summary>
+            User JWT token to be used in the subsequent calls for authorization
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.DAL.DTOs.SignInDto.Expires">
+            <summary>
+            Timestamp at which the token expires
+            </summary>
+        </member>
+        <member name="P:Mamlaka.API.DAL.DTOs.SignInDto.User">
+            <summary>
+            Logged in user
+            </summary>
+        </member>
+        <member name="M:Mamlaka.API.Helpers.Helpers.ToUpperFirst(System.String)">
+            <summary>
+            Uppercase the first letter in the string.
+            </summary>
+            <param name="value">your string to cast</param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Helpers.Helpers.ToTitleCase(System.String)">
+            <summary>
+            Uppercase the first letter of each word in the string.
+            </summary>
+            <param name="value">string to cast</param>
+            <returns></returns>
+        </member>
+        <member name="T:Mamlaka.API.Migrations.interviewmigration1">
+            <inheritdoc />
+        </member>
+        <member name="M:Mamlaka.API.Migrations.interviewmigration1.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Mamlaka.API.Migrations.interviewmigration1.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Mamlaka.API.Migrations.interviewmigration1.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Mamlaka.API.Services.HostedService.HostedService.StartAsync(System.Threading.CancellationToken)">
+            <summary>
+            check if the indeces exist, if not create them
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Swagger.ConfigureSwaggerOptions.#ctor(Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Mamlaka.API.Swagger.ConfigureSwaggerOptions"/> class.
+            </summary>
+            <param name="provider">The <see cref="T:Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
+        </member>
+        <member name="M:Mamlaka.API.Swagger.ConfigureSwaggerOptions.Configure(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Mamlaka.API.Swagger.SwaggerDefaultValues.Apply(Microsoft.OpenApi.Models.OpenApiOperation,Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext)">
+            <summary>
+            Applies the filter to the specified operation using the given context.
+            </summary>
+            <param name="operation">The operation to apply the filter to.</param>
+            <param name="context">The current operation filter context.</param>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,6 @@
+@Mamlaka.API_HostAddress = http://localhost:5037
+
+GET {{Mamlaka.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

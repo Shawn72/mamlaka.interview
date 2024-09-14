@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mamlaka.API", "Mamlaka.API.csproj", "{9BEC41C7-773B-4C7E-86A0-28145C3CA502}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9BEC41C7-773B-4C7E-86A0-28145C3CA502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BEC41C7-773B-4C7E-86A0-28145C3CA502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BEC41C7-773B-4C7E-86A0-28145C3CA502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BEC41C7-773B-4C7E-86A0-28145C3CA502}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D3FD215-5A4F-4024-A511-82A6F732FB86}
+	EndGlobalSection
+EndGlobal
