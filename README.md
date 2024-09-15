@@ -32,7 +32,7 @@
   ### The migration creates all the necessary tables and also adds user roles
 
 # Run the API to pull up swagger UI
-## the followng url is launched: https://localhost:7124/swagger/ui/index.html
+## the following url is launched: https://localhost:7124/swagger/ui/index.html
 ## access the endpoints using the above url
 ## to view transactions using the portal, launch the react (cloned from Mamlaka Ui repo, given above too) portal on port 3000, then use the user you have created to login
 
@@ -41,7 +41,8 @@
 ## on the right hand corner, click on 'Authorize' button, the paste the JWT token obtained after sign in.
 ## now you will be able to hit the rest of endpoints without getting HTTP error 403
 
-## the payments flow should START by initiating a Paypal transaction using endpoint 'api/transactions/paypal-payment'
+## use swagger Ui to initiate Paypal paymnent transaction
+## the payments flow should START by initiating a Paypal transaction using endpoint 'api/payment/paypal-payment'
 ## transaction is saved in database and after successful paypal processing, it's updated using token as the identifier.
 
 ### Swagger UI page
