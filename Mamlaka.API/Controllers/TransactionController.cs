@@ -11,16 +11,15 @@ using Mamlaka.API.DAL.Enums;
 using Mamlaka.API.Attributes;
 using Mamlaka.API.Interfaces;
 using Mamlaka.API.Exceptions;
-using Mamlaka.API.CommonObjects.Requests;
-using Mamlaka.API.Services.GatewayService;
-using Mamlaka.API.DAL.Entities.Transactions;
 using Mamlaka.API.DAL.Models;
+using Mamlaka.API.CommonObjects.Requests;
+using Mamlaka.API.DAL.Entities.Transactions;
 
 namespace Mamlaka.API.Controllers;
 
 [
     ApiController,
-    Route("api/transactions"),
+    Route("api/payment"),
     SwaggerOrder("B"),
     EnableCors("CorsPolicy")
 ]
@@ -35,11 +34,11 @@ public class TransactionController : ControllerBase
         )
     {
         _paginationRepository = paginationRepository;
-        _transactionRepository = transactionRepository; 
+        _transactionRepository = transactionRepository;
     }
 
     /// <summary>
-    /// add new transaction to the system
+    /// add new payment transaction to the system
     /// </summary>
     /// <param name="request"></param>
     /// <remarks>
@@ -66,62 +65,32 @@ public class TransactionController : ControllerBase
         }
 
         return Ok(await _transactionRepository.CreateTransaction(request));
-    }
+    }   
 
     /// <summary>
-    /// third party paypal payment endpoint
-    /// </summary>
-    /// <param name="paymentModel"></param>
-    /// <returns></returns>
-    [HttpPost, Route("paypal-payment"), AllowAnonymous]
-    [Produces(MediaTypeNames.Application.Json), Consumes(MediaTypeNames.Application.Json)]
-    public IActionResult AddNewPaypalTransaction([FromBody, Required] PaymentModel paymentModel)
-    {
-        if (paymentModel is null)
-            return BadRequest();
-
-        string baseUrl = $"{Request.Scheme}://{Request.Host}";
-
-        return Ok(_transactionRepository.CreatePaypalPayment(paymentModel, baseUrl));
-    }
-
-    /// <summary>
-    /// execute payment and return response, determine if it went through
-    /// </summary>
-    /// <param name="paymentId"></param>
-    /// <param name="payerID"></param>
-    /// <returns></returns>
-    [HttpPost, Route("execute-paypal-payment"), AllowAnonymous]
-    [Produces(MediaTypeNames.Application.Json), Consumes(MediaTypeNames.Application.Json)]
-    public IActionResult ExcecutePaypalTransaction([FromQuery, Required] string paymentId, string payerID)
-    {
-        return Ok(_transactionRepository.ExcecutePaypalPayment(paymentId, payerID));
-    }
-
-    /// <summary>
-    /// get the list of all transactions
+    /// get the list of all payment transactions
     /// </summary>
     /// <returns></returns>
-    [HttpGet("list")]
+    [HttpGet("transactions")]
     public async Task<IActionResult> GetAllTransactions()
     {
         return Ok(await _transactionRepository.GetTransactionsList());
     }
 
     /// <summary>
-    /// get specific transction by Id
+    /// get specific payment by Id
     /// </summary>
-    /// <param name="transactionId"></param>
+    /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("{transactionId}")]
-    public async Task<IActionResult> GetTransactionById(long transactionId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetTransactionById(long id)
     {
-        if (string.IsNullOrWhiteSpace(transactionId.ToString())) return BadRequest("transactionId must be provided.");
-        return Ok(await _transactionRepository.GetTransaction(transactionId));
+        if (string.IsNullOrWhiteSpace(id.ToString())) return BadRequest("id must be provided.");
+        return Ok(await _transactionRepository.GetTransaction(id));
     }
 
     /// <summary>
-    /// return book: update book loan details with status returned true
+    /// update payment transaction
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -136,24 +105,81 @@ public class TransactionController : ControllerBase
     }
 
     /// <summary>
-    /// delete transaction entry from the database
+    /// delete payment entry from the database
     /// </summary>
-    /// <param name="transactionId"></param>
+    /// <param name="id"></param>
     /// <returns></returns>
-    [HttpDelete("delete/{transactionId}")]
+    [HttpDelete("delete/{id}"), Authorize(Policy = nameof(AuthPolicy.SuperRights))]
     [Produces(MediaTypeNames.Application.Json), Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> DeleteTransaction(long transactionId)
+    public async Task<IActionResult> DeleteTransaction(long id)
     {
-        Transaction? transaction = await _transactionRepository.GetTransaction(transactionId);
+        Transaction? transaction = await _transactionRepository.GetTransaction(id);
         if (transaction is null)
             return NotFound("transaction entry not found.");
         return Ok(await _transactionRepository.DeleteTransaction(transaction));
     }
 
-    #region PAGINATON
-   
+    #region PAYPAL
+
     /// <summary>
-    /// return list of paged loan repayments
+    /// initiate third party paypal payment
+    /// </summary>
+    /// <param name="paymentModel"></param>
+    /// <returns></returns>
+    /// <remarks>
+    /// request format
+    ///  {
+    ///    "currency": "USD",
+    ///    "tax": "1.00",
+    ///    "shipping": "1.00",
+    ///    "subTotal": "2.00",
+    ///    "total": 4, //total = (tax + shipping + subTotal) in USD
+    ///    "userId": "aadebb5b-39fd-4dee-ae1a-d01f18df833d",
+    ///    "transactionDescription": "paypal-test-mbuvi"
+    ///  }
+    /// </remarks>
+    [HttpPost, Route("paypal-payment"), AllowAnonymous]
+    [Produces(MediaTypeNames.Application.Json), Consumes(MediaTypeNames.Application.Json)]
+    public async Task<IActionResult> AddNewPaypalTransaction([FromBody, Required] PaymentModel paymentModel)
+    {
+        if (paymentModel is null)
+            return BadRequest();
+
+        string baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+        return Ok(await _transactionRepository.CreatePaypalPayment(paymentModel, baseUrl));
+    }
+
+    /// <summary>
+    /// paypal callback endpoint
+    /// </summary>
+    /// <param name="paymentId"></param>
+    /// <param name="token"></param>
+    /// <param name="PayerID"></param>
+    /// <returns></returns>
+    [HttpGet("paypal/success")]
+    public IActionResult PaypalPaymentResponse(string paymentId, string token, string PayerID)
+    {
+        return Ok(_transactionRepository.ExcecutePaypalPayment(paymentId, token, PayerID));
+    }
+
+    /// <summary>
+    /// cancel paypal transaction
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    [HttpGet("paypal/cancel")]
+    public IActionResult CancelPaypalPayment(string token)
+    {
+        return Ok(_transactionRepository.CancelPaypalPayment(token));
+    }
+
+    #endregion
+
+    #region PAGINATON
+
+    /// <summary>
+    /// return list of paged payments
     /// </summary>
     /// <param name="pagingParameters"></param>
     /// <returns></returns>

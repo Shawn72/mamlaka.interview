@@ -134,7 +134,7 @@
         </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.AddNewTransaction(Mamlaka.API.CommonObjects.Requests.TransactionRequest)">
             <summary>
-            add new transaction to the system
+            add new payment transaction to the system
             </summary>
             <param name="request"></param>
             <remarks>
@@ -149,51 +149,71 @@
             </remarks>
             <returns></returns>
         </member>
-        <member name="M:Mamlaka.API.Controllers.TransactionController.AddNewPaypalTransaction(Mamlaka.API.DAL.Models.PaymentModel)">
-            <summary>
-            third party paypal payment endpoint
-            </summary>
-            <param name="paymentModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Mamlaka.API.Controllers.TransactionController.ExcecutePaypalTransaction(System.String,System.String)">
-            <summary>
-            execute payment and return response, determine if it went through
-            </summary>
-            <param name="paymentId"></param>
-            <param name="payerID"></param>
-            <returns></returns>
-        </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.GetAllTransactions">
             <summary>
-            get the list of all transactions
+            get the list of all payment transactions
             </summary>
             <returns></returns>
         </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.GetTransactionById(System.Int64)">
             <summary>
-            get specific transction by Id
+            get specific payment by Id
             </summary>
-            <param name="transactionId"></param>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.UpdateTransaction(Mamlaka.API.CommonObjects.Requests.TransactionEditRequest)">
             <summary>
-            return book: update book loan details with status returned true
+            update payment transaction
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.DeleteTransaction(System.Int64)">
             <summary>
-            delete transaction entry from the database
+            delete payment entry from the database
             </summary>
-            <param name="transactionId"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.AddNewPaypalTransaction(Mamlaka.API.DAL.Models.PaymentModel)">
+            <summary>
+            initiate third party paypal payment
+            </summary>
+            <param name="paymentModel"></param>
+            <returns></returns>
+            <remarks>
+            request format
+             {
+               "currency": "USD",
+               "tax": "1.00",
+               "shipping": "1.00",
+               "subTotal": "2.00",
+               "total": 4, //total = (tax + shipping + subTotal) in USD
+               "userId": "aadebb5b-39fd-4dee-ae1a-d01f18df833d",
+               "transactionDescription": "paypal-test-mbuvi"
+             }
+            </remarks>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.PaypalPaymentResponse(System.String,System.String,System.String)">
+            <summary>
+            paypal callback endpoint
+            </summary>
+            <param name="paymentId"></param>
+            <param name="token"></param>
+            <param name="PayerID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Mamlaka.API.Controllers.TransactionController.CancelPaypalPayment(System.String)">
+            <summary>
+            cancel paypal transaction
+            </summary>
+            <param name="token"></param>
             <returns></returns>
         </member>
         <member name="M:Mamlaka.API.Controllers.TransactionController.GetPagedTransactionData(Mamlaka.API.Paging.PagingParameters)">
             <summary>
-            return list of paged loan repayments
+            return list of paged payments
             </summary>
             <param name="pagingParameters"></param>
             <returns></returns>

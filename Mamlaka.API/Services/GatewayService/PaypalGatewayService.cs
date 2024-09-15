@@ -37,8 +37,8 @@ public class PaypalGatewayService
 
         var redirectUrls = new RedirectUrls()
         {
-            cancel_url = $"{baseUrl}/paypal/cancel",
-            return_url = $"{baseUrl}/paypal/success"
+            cancel_url = $"{baseUrl}/api/payment/paypal/cancel",
+            return_url = $"{baseUrl}/api/payment/paypal/success"
         };
 
         var details = new Details()
@@ -56,8 +56,6 @@ public class PaypalGatewayService
         };
 
         var transactionList = new List<Transaction>();
-
-
 
         transactionList.Add(new Transaction()
         {

@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using AutoMapper;
+using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using Mamlaka.API.CommonObjects.Requests;
@@ -9,7 +9,9 @@ using Mamlaka.API.Extensions;
 using Mamlaka.API.Interfaces;
 using Mamlaka.API.DAL.DbContexts;
 
+using Dapper;
 using Redis.OM;
+using AutoMapper;
 using Redis.OM.Searching;
 
 using Mamlaka.API.RedisORM;
@@ -19,7 +21,9 @@ using Mamlaka.API.DAL.Models;
 using Mamlaka.API.DAL.Entities;
 using Mamlaka.API.Services.GatewayService;
 using Constants = Mamlaka.API.DAL.Constants.Constants; //to remove ambinguity
-using Transaction = Mamlaka.API.DAL.Entities.Transactions.Transaction; //to remove ambinguity
+using Transaction = Mamlaka.API.DAL.Entities.Transactions.Transaction;
+using Mamlaka.API.DAL.Queries;
+using System.Data;
 
 namespace Mamlaka.API.Repositories;
 
@@ -27,6 +31,7 @@ public class TransactionRepository : ITransactionRepository
 {
     private readonly IMapper _mapper;
     private readonly Constants _constants;
+    private readonly string connectionString;
     private readonly IConfiguration _configuration;
     private readonly MySqlDbContext _databaseContext;
     private readonly IUserRepository _userRepository;
@@ -55,6 +60,7 @@ public class TransactionRepository : ITransactionRepository
         _constants = new Constants(configuration);
         _redisTransaction = (RedisCollection<TransactionRedisModel>)
             _provider.RedisCollection<TransactionRedisModel>();
+        connectionString = _constants.SqlConnectionString(configuration);
     }
     public async Task<object> CreateTransaction(TransactionRequest request)
     {
@@ -75,7 +81,7 @@ public class TransactionRepository : ITransactionRepository
                 if (!Enum.TryParse(trxStatusString, out transactionStatus))
                 {
                     throw new CustomException($"Invalid transaction status", "ERR412", HttpStatusCode.PreconditionFailed);
-                }                
+                }
 
                 Transaction _transaction = new()
                 {
@@ -178,6 +184,7 @@ public class TransactionRepository : ITransactionRepository
                         Amount = Math.Round(transaction.Amount, 2, MidpointRounding.AwayFromZero),
                         UserFullName = Regex.Replace($"{transaction.User.FirstName}{" "}{transaction.User.LastName}", @"\s+", " "),
                         TransactionRefId = transaction.TransactionRefId,
+                        TransactionStatus = transaction.TransactionStatus,
                         TransactionDate = transaction.TransactionDate.ToLongDateString(),
                         CreatedAt = transaction.TransactionDate.ToLongDateString(),
                         ModifiedAt = transaction.ModifiedAt.ToLongDateString(),
@@ -299,16 +306,37 @@ public class TransactionRepository : ITransactionRepository
         return "cache reloaded";
     }
 
-    public object CreatePaypalPayment(PaymentModel paymentModel, string baseUrl)
+    public async Task<object> CreatePaypalPayment(PaymentModel paymentModel, string baseUrl)
     {
         var payment = _payPalService.CreatePayment(baseUrl, paymentModel);
 
         var approvalUrl = payment.links.FirstOrDefault(x => x.rel.Equals("approval_url", StringComparison.OrdinalIgnoreCase))?.href;
 
-        return approvalUrl!.ToString();
+        //insert transaction with status pending
+
+        TransactionRequest trxRequest = new TransactionRequest()
+        {
+            UserId = paymentModel.UserId,
+            TransactionRefId = payment.token,
+            TransactionStatus = nameof(TransactionStatus.Pending),
+            Amount = paymentModel.Total,
+            ModifiedBy = _constants._defaultActor
+        };
+
+        string trxResponse = (string)await CreateTransaction(trxRequest);
+        string[] _split = trxResponse.ToString().Split("*");
+
+        if (_split[0] == "success")
+        {
+            return $"{approvalUrl}";
+        }
+        else
+        {
+            return _split[1];
+        }
     }
 
-    public object ExcecutePaypalPayment(string paymentId, string payerID)
+    public object ExcecutePaypalPayment(string paymentId, string token, string payerID)
     {
         //payerId: paypal email of the payer
         var payment = _payPalService.ExecutePayment(paymentId, payerID);
@@ -317,7 +345,56 @@ public class TransactionRepository : ITransactionRepository
         {
             return "failed";
         }
-        return payment.state.ToLower();
 
+        //update transaction
+        using (IDbConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            int response = connection.Execute(Queries.UPDATE_TRANSACTION,
+                new
+                {
+                    _transactionStatus = nameof(TransactionStatus.Successful),
+                    _modifiedAt = DateTime.UtcNow.ToEastAfricanTime().ToString("yyyy-MM-dd HH:mm:ss tt"),
+                    _modifiedBy = _constants._defaultActor,
+                    _token = token
+                });
+            connection.Close();
+
+            if (response > 0)
+            {
+                return $"success*transaction status updated successfully.";
+            }
+            else
+            {
+                return "error*transaction update failed.";
+            }
+        }
+    }
+
+    public object CancelPaypalPayment(string token)
+    {
+        //update transaction
+        using (IDbConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            int response = connection.Execute(Queries.UPDATE_TRANSACTION,
+                new
+                {
+                    _transactionStatus = nameof(TransactionStatus.Cancelled),
+                    _modifiedAt = DateTime.UtcNow.ToEastAfricanTime().ToString("yyyy-MM-dd HH:mm:ss tt"),
+                    _modifiedBy = _constants._defaultActor,
+                    _token = token
+                });
+            connection.Close();
+
+            if (response > 0)
+            {
+                return $"success*transaction status updated successfully.";
+            }
+            else
+            {
+                return "error*transaction update failed.";
+            }
+        }
     }
 }

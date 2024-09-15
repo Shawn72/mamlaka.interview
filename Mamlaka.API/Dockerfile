@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 7123
+EXPOSE 7124
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -20,5 +20,5 @@ RUN dotnet publish "./Mamlaka.API.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV ASPNETCORE_URLS http://*:7123
+ENV ASPNETCORE_URLS http://*:7124
 ENTRYPOINT ["dotnet", "Mamlaka.API.dll"]

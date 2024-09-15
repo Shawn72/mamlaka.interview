@@ -11,6 +11,7 @@ public interface ITransactionRepository
     Task<object> UpdateTransaction(TransactionEditRequest request, Transaction transaction);
     Task<object> DeleteTransaction(Transaction transaction);
     Task<object> LoadTransactionsToRedisCache();
-    object CreatePaypalPayment(PaymentModel paymentModel, string baseUrl);
-    object ExcecutePaypalPayment(string paymentId, string payerID);
+    Task<object> CreatePaypalPayment(PaymentModel paymentModel, string baseUrl);
+    object ExcecutePaypalPayment(string paymentId, string token, string payerID);
+    object CancelPaypalPayment(string token);
 }
